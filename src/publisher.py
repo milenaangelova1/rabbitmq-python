@@ -40,16 +40,6 @@ class Publisher:
             Close the connection
         """
         self.__connection.close()
-
-def get_arguments():
-    if len(sys.argv) < 2:
-        print('Wrong number of input arguments! We expect to have two input arguments.')
-        sys.exit()
-    else:
-        queueName = sys.argv[1]
-        #key in the form exchange.*
-        key = sys.argv[2]
-    return queueName, key
    
 if __name__ == '__main__':
     config = {'host': 'localhost', 'exchange': ''}
