@@ -1,4 +1,3 @@
-from src.receive import main
 import unittest
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 

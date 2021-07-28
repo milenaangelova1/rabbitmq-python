@@ -27,3 +27,46 @@ Create a dockerized worker broker service to poll for messages with that structu
 - After a failed execution (return false) the message should be sent to another queue ('failed').
 - Unit tests are not required, but will be appreciated.
 ```
+
+### Start the project
+Run the docker image with <br>
+```
+docker run -d --hostname my-rabbit --name some-rabbit rabbitmq:3
+```
+
+Create a virtual env: <br>
+There a two different commands: <br>
+```
+virtualenv venv
+```
+
+or <br>
+
+```
+python3 -m venv 
+```
+
+Activate the virtualenv: <br>
+```
+. venv/bin/activate
+```
+
+Install the requirements: <br>
+```
+pip install -r requirements.txt
+```
+
+Run a subscriber: <br>
+```
+python src/subscriber.py
+```
+
+Run a publisher: <br>
+```
+python src/publisher.py
+```
+
+### Run the tests
+```
+python tests/test_rabbitmq.py
+```
