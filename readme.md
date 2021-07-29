@@ -31,6 +31,7 @@ Create a dockerized worker broker service to poll for messages with that structu
 ### Start the project
 Run the docker image with <br>
 ```
+docker pull rabbitmq
 docker run -d --hostname my-rabbit --name some-rabbit rabbitmq:3
 ```
 

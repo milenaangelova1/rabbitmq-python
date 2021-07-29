@@ -23,7 +23,7 @@ class Publisher:
         A method that will publish a message.
         """
         channel = self.__connection.channel()
-        channel.queue_declare(queue=self.__queue_name)
+        channel.queue_declare(queue=self.__queue_name, durable=True)
         for n in range(1, 3):
             param = True
     
@@ -32,7 +32,11 @@ class Publisher:
                 
             message = Message(param).get_message()
             message["task"] = message["task"].format(n)
-            channel.basic_publish(exchange='', routing_key=self.__queue_name, body=json.dumps(message))
+            channel.basic_publish(exchange='', routing_key=self.__queue_name, body=json.dumps(message), 
+                properties=pika.BasicProperties(
+                    delivery_mode=2,  # make message persistent
+                )
+            )
             print("[X] Sent {}".format(message))
             
     def __del__(self):
@@ -43,6 +47,6 @@ class Publisher:
    
 if __name__ == '__main__':
     config = {'host': 'localhost', 'exchange': ''}
-    publisher = Publisher(config, queue_name='queue_message')
+    publisher = Publisher(config, queue_name='task_queue')
     publisher.publish()
     

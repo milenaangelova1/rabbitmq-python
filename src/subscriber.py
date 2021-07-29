@@ -1,5 +1,5 @@
 from re import sub
-import pika, sys, os, json
+import pika, sys, os, json, time, random
 
 class Subscriber:
     """
@@ -14,7 +14,7 @@ class Subscriber:
     
     def __del__(self):
         """
-        Close the connection
+            Close the connection
         """
         self.__connection.close()
         
@@ -61,6 +61,7 @@ class Subscriber:
         """
         response = json.loads(body)
         print(" [x] Received %r" % body.decode())
+        time.sleep(random.randint(1,5))
         task = response['task']
         if task == 'task_1':
             # if it is successful the message should be removed otherwise should be sent to the other worker
@@ -69,6 +70,7 @@ class Subscriber:
             
         elif task == 'task_2':
             self.__worker_2()
+        ch.basic_ack(delivery_tag=method.delivery_tag)
                 
     def subscribe(self):
         """
@@ -76,19 +78,19 @@ class Subscriber:
         """
         channel = self.__connection.channel()
         
-        channel.queue_declare(queue=self.__queue_name)
+        channel.queue_declare(queue=self.__queue_name, durable=True)
         
         channel.basic_consume(queue=self.__queue_name, on_message_callback=self.__callback)
+        channel.basic_qos(prefetch_count=1)
         
         print('[*] Waiting for messages. To exit press CTRL+C')
         channel.start_consuming()
         
     
-    
 if __name__ == '__main__':
     try:
         config = {'host':'localhost', 'exchange': ''}
-        subscriber = Subscriber(config, queue_name='queue_message')
+        subscriber = Subscriber(config, queue_name='task_queue')
         subscriber.subscribe()
     except KeyboardInterrupt:
         print('Interrupted')
